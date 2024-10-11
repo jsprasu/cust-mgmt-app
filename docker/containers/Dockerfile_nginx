@@ -1,0 +1,2 @@
+# nginx
+FROM nginx:latest
