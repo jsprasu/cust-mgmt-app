@@ -1,42 +1,71 @@
-# Slim Framework 4 Skeleton Application
+# Customer management app.
 
-[![Coverage Status](https://coveralls.io/repos/github/slimphp/Slim-Skeleton/badge.svg?branch=master)](https://coveralls.io/github/slimphp/Slim-Skeleton?branch=master)
+Customer management app with Slim, MySQL, Doctrine, ElasticSearch & Docker.
 
-Use this skeleton application to quickly setup and start working on a new Slim Framework 4 application. This application uses the latest Slim 4 with Slim PSR-7 implementation and PHP-DI container implementation. It also uses the Monolog logger.
+## Prerequisites
 
-This skeleton application was built for Composer. This makes setting up a new Slim Framework application quick and easy.
+Make sure you have installed Docker and it is active. Refer https://docs.docker.com/engine/install/ for more details.
 
 ## Install the Application
 
-Run this command from the directory in which you want to install your new Slim Framework application. You will require PHP 7.4 or newer.
+1. Checkout or download the Github repository.
 
+2. Open terminal and go to project directory.
 ```bash
-composer create-project slim/slim-skeleton [my-app-name]
+cd <project-directory>
 ```
 
-Replace `[my-app-name]` with the desired directory name for your new application. You'll want to:
-
-* Point your virtual host document root to your new application's `public/` directory.
-* Ensure `logs/` is web writable.
-
-To run the application in development, you can run these commands 
-
+3. Move to docker folder inside the project directory.
 ```bash
-cd [my-app-name]
-composer start
+cd docker
 ```
 
-Or you can use `docker-compose` to run the app with `docker`, so you can run these commands:
+4. Build the docker containers.
 ```bash
-cd [my-app-name]
+docker-compose build
+```
+
+5. Start docker containers.
+```bash
 docker-compose up -d
 ```
-After that, open `http://localhost:8080` in your browser.
 
-Run this command in the application directory to run the test suite
-
+6. Check whether the containers are up and running.
 ```bash
-composer test
+docker ps
 ```
 
-That's it! Now go build something cool.
+7. Go inside the PHP container.
+```bash
+docker exec -it cust-mgmt-app-php bash
+```
+
+8. Install composer dependencies.
+```bash
+composer install
+```
+
+9. Run the migrations.
+```bash
+./vendor/bin/doctrine-migrations migrate
+```
+
+10. Exit from the PHP container.
+```bash
+exit
+```
+
+11. Add the host. Make sure to use the same domain mentioned below as it is used in the Nginx config file.
+
+    a. In Mac, /etc/hosts.
+
+    b. In Windows, C:\Windows\System32\drivers\etc\hosts.
+```bash
+127.0.0.1 cust-mgmt-app.local
+```
+
+That's it! Project setup is complete now.
+
+## Usage
+
+Please refer the API documentation.
