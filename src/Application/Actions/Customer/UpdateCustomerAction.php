@@ -6,7 +6,6 @@ namespace App\Application\Actions\Customer;
 
 use App\Domain\Customer\CustomerDetailsIncompleteException;
 use App\Domain\Customer\CustomerEmailIncompleteException;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 
 /**

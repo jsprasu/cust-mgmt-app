@@ -64,6 +64,11 @@ exit
 127.0.0.1 cust-mgmt-app.local
 ```
 
+12. Testing - Execute the below command inside the PHP container.
+```bash
+./vendor/bin/phpunit --verbose tests
+```
+
 That's it! Project setup is complete now.
 
 ## Usage

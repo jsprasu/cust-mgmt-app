@@ -139,13 +139,31 @@ class CustomerRepository
     /**
      * Add customer
      * 
-     * @param string $name
-     * @param string $email
-     * @param string $phoneNumber
+     * @param array $postData
      * @return void
      */
-    public function create(string $name, string $email, string $phoneNumber): void
+    public function create(array $postData): void
     {
+        // Validations
+        if (
+            !isset($postData['name']) ||
+            !isset($postData['email']) ||
+            !isset($postData['phone_number']) ||
+            empty($postData['name']) ||
+            empty($postData['email']) ||
+            empty($postData['phone_number'])
+            ) {
+                throw new CustomerDetailsIncompleteException();
+        }
+
+        if (!filter_var($postData['email'], FILTER_VALIDATE_EMAIL)) {
+            throw new CustomerEmailIncompleteException();
+        }
+
+        $name = $postData['name'];
+        $email = $postData['email'];
+        $phoneNumber = $postData['phone_number'];
+
         $customerData = new CustomerDomain($name, $email, $phoneNumber);
         $this->em->persist($customerData);
         $this->em->flush();
