@@ -142,21 +142,8 @@ class CustomerRepository
      */
     public function create(array $postData): void
     {
-        // Validations
-        if (
-            !isset($postData['name']) ||
-            !isset($postData['email']) ||
-            !isset($postData['phone_number']) ||
-            empty($postData['name']) ||
-            empty($postData['email']) ||
-            empty($postData['phone_number'])
-            ) {
-                throw new CustomerDetailsIncompleteException();
-        }
-
-        if (!filter_var($postData['email'], FILTER_VALIDATE_EMAIL)) {
-            throw new CustomerEmailIncompleteException();
-        }
+        // Validate the post data
+        $this->validateCustomerPostData($postData);
 
         $name = $postData['name'];
         $email = $postData['email'];
@@ -173,13 +160,18 @@ class CustomerRepository
      * Update customer
      * 
      * @param CustomerDomain $customer
-     * @param string $name
-     * @param string $email
-     * @param string $phoneNumber
+     * @param array $postData
      * @return void
      */
-    public function update(CustomerDomain $customer, string $name, string $email, string $phoneNumber): void
+    public function update(CustomerDomain $customer, array $postData): void
     {
+        // Validate the post data
+        $this->validateCustomerPostData($postData);
+
+        $name = $postData['name'];
+        $email = $postData['email'];
+        $phoneNumber = $postData['phone_number'];
+
         $customer->setName($name);
         $customer->setEmail($email);
         $customer->setPhoneNumber($phoneNumber);
@@ -188,6 +180,33 @@ class CustomerRepository
         $this->em->flush();
 
         $this->updateElasticSearchRecords($customer, 'update');
+    }
+
+    /**
+     * Validate the post data when creating or updating a customer
+     * 
+     * @param array $postData
+     * @return void
+     * @throws CustomerDetailsIncompleteException
+     * @throws CustomerEmailIncompleteException
+     */
+    private function validateCustomerPostData(array $postData): void
+    {
+        // Validations
+        if (
+            !isset($postData['name']) ||
+            !isset($postData['email']) ||
+            !isset($postData['phone_number']) ||
+            empty($postData['name']) ||
+            empty($postData['email']) ||
+            empty($postData['phone_number'])
+        ) {
+            throw new CustomerDetailsIncompleteException();
+        }
+
+        if (!filter_var($postData['email'], FILTER_VALIDATE_EMAIL)) {
+            throw new CustomerEmailIncompleteException();
+        }
     }
 
     /**

@@ -1,7 +1,5 @@
 <?php
 
-// src/Domain/Customer.php
-
 namespace App\Domain\Customer;
 
 use Doctrine\ORM\Mapping\Column;
@@ -13,6 +11,9 @@ use Doctrine\ORM\Mapping\Table;
 #[Entity, Table(name: 'customers')]
 final class Customer
 {
+    /**
+     * Fields
+     */
     #[Id, Column(type: 'integer'), GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
@@ -24,6 +25,9 @@ final class Customer
 
     #[Column(type: 'string', nullable: false)]
     private string $phone_number;
+    /**
+     * End - Fields
+     */
 
     public function __construct(string $name, string $email, string $phone_number)
     {
@@ -32,6 +36,9 @@ final class Customer
         $this->phone_number = $phone_number;
     }
 
+    /**
+     * Getters
+     */
     public function getId(): int
     {
         return $this->id;
@@ -51,7 +58,13 @@ final class Customer
     {
         return $this->phone_number;
     }
+    /**
+     * End - Getters
+     */
 
+     /**
+      * Setters
+      */
     public function setName(string $name): string
     {
         return $this->name = $name;
@@ -66,4 +79,7 @@ final class Customer
     {
         return $this->phone_number = $phoneNumber;
     }
+    /**
+     * End - Setters
+     */
 }

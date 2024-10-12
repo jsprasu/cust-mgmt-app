@@ -203,3 +203,7 @@
 [2024-10-12T10:46:44.286915+00:00] slim-app.INFO: Customers list was viewed. [] {"uid":"59dedd4"}
 [2024-10-12T10:50:06.299245+00:00] slim-app.INFO: Customers list was viewed. [] {"uid":"673b411"}
 [2024-10-12T10:50:20.271505+00:00] slim-app.INFO: Customers list was viewed. [] {"uid":"f0636c0"}
+[2024-10-12T11:17:30.349535+00:00] slim-app.INFO: Customer was added. [] {"uid":"858cb47"}
+[2024-10-12T11:17:46.249056+00:00] slim-app.INFO: Customer was updated. [] {"uid":"befdf81"}
+[2024-10-12T11:19:07.821378+00:00] slim-app.INFO: Customer was added. [] {"uid":"b4fd136"}
+[2024-10-12T11:19:43.711809+00:00] slim-app.INFO: Customer was updated. [] {"uid":"81a8ed2"}

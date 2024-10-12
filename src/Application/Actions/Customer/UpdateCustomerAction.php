@@ -18,26 +18,10 @@ class UpdateCustomerAction extends CustomerAction
      */
     protected function action(): Response
     {
+        $custId = (int) $this->resolveArg('id');
+        
         // Read the post data
         $postData = $this->request->getParsedBody();
-
-        // Validations
-        if (
-            !isset($postData['name']) ||
-            !isset($postData['email']) ||
-            !isset($postData['phone_number']) ||
-            empty($postData['name']) ||
-            empty($postData['email']) ||
-            empty($postData['phone_number'])
-            ) {
-                throw new CustomerDetailsIncompleteException();
-        }
-
-        if (!filter_var($postData['email'], FILTER_VALIDATE_EMAIL)) {
-            throw new CustomerEmailIncompleteException();
-        }
-
-        $custId = (int) $this->resolveArg('id');
 
         // Read the customer details
         // and throw exception if customer not found
@@ -45,9 +29,7 @@ class UpdateCustomerAction extends CustomerAction
         
         $this->customerRepository->update(
             $customer,
-            $postData['name'], 
-            $postData['email'], 
-            $postData['phone_number']
+            $postData
         );
 
         $this->logger->info("Customer was updated.");
