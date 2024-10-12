@@ -1,2 +1,4 @@
 vendor/
 docker/elasticsearch-data/*
+.phpunit.result.cache
+logs/
