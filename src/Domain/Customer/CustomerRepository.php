@@ -91,22 +91,20 @@ class CustomerRepository
                             'should' => array_values($match)
                         ],
                     ],
-                ]
+                ],
             ];
-
-            // Search through ElasticSearch
-            $results = $this->elasticClient->search($params);
-            
-            return $results['hits']['hits'];
         } else {
-            // Return all records from table
-            $query = $this->em->getRepository(CustomerDomain::class)
-                ->createQueryBuilder('c')
-                ->getQuery();
-            $result = $query->getResult(Query::HYDRATE_ARRAY);
-            
-            return $result;
+            $params = [
+                'index' => 'customers',
+                'size' => 25,
+                'sort' => ['id:asc'],
+            ];
         }
+
+        // Get results from ElasticSearch
+        $results = $this->elasticClient->search($params);
+        
+        return $results['hits']['hits'];
     }
 
     /**
