@@ -104,7 +104,26 @@ class CustomerRepository
         // Get results from ElasticSearch
         $results = $this->elasticClient->search($params);
         
-        return $results['hits']['hits'];
+        $customers = $this->prepareCustomerArrayFromES($results['hits']['hits']);
+
+        return $customers;
+    }
+
+    /**
+     * Prepare the customers array from Elastic search response
+     * 
+     * @param array $customers
+     * @return array
+     */
+    private function prepareCustomerArrayFromES(array $customers): array
+    {
+        $preparedCustomers = [];
+
+        foreach ($customers as $customer) {
+            $preparedCustomers[] = $customer['_source'];
+        }
+
+        return $preparedCustomers;
     }
 
     /**
@@ -138,9 +157,9 @@ class CustomerRepository
      * Add customer
      * 
      * @param array $postData
-     * @return void
+     * @return array
      */
-    public function create(array $postData): void
+    public function create(array $postData): array
     {
         // Validate the post data
         $this->validateCustomerPostData($postData);
@@ -153,7 +172,9 @@ class CustomerRepository
         $this->em->persist($customerData);
         $this->em->flush();
         
-        $this->updateElasticSearchRecords($customerData, 'add');
+        $customer = $this->updateElasticSearchRecords($customerData, 'add');
+
+        return $customer;
     }
 
     /**
@@ -161,9 +182,9 @@ class CustomerRepository
      * 
      * @param CustomerDomain $customer
      * @param array $postData
-     * @return void
+     * @return array
      */
-    public function update(CustomerDomain $customer, array $postData): void
+    public function update(CustomerDomain $customer, array $postData): array
     {
         // Validate the post data
         $this->validateCustomerPostData($postData);
@@ -179,7 +200,9 @@ class CustomerRepository
         $this->em->persist($customer);
         $this->em->flush();
 
-        $this->updateElasticSearchRecords($customer, 'update');
+        $customer = $this->updateElasticSearchRecords($customer, 'update');
+
+        return $customer;
     }
 
     /**
@@ -217,10 +240,30 @@ class CustomerRepository
      */
     public function delete(CustomerDomain $customer): void
     {
-        $this->updateElasticSearchRecords($customer, 'delete');
+        try {
+            $this->updateElasticSearchRecords($customer, 'delete');
+        } catch (\Exception $ex) {
+
+        }
 
         $this->em->remove($customer);
         $this->em->flush();
+    }
+
+    /**
+     * Create customer array from entity
+     * 
+     * @param CustomerDomain $customer
+     * @return array
+     */
+    private function createCustomerArrayFromEntity(CustomerDomain $customer): array
+    {
+        return [
+            'id' => $customer->getId(),
+            'name' => $customer->getName(),
+            'email' => $customer->getEmail(),
+            'phone_number' => $customer->getPhoneNumber(),
+        ];
     }
 
     /**
@@ -228,19 +271,15 @@ class CustomerRepository
      * 
      * @param CustomerDomain $customer
      * @param string $action
-     * @return void
+     * @return array
      */
-    private function updateElasticSearchRecords(CustomerDomain $customer, string $action): void
+    private function updateElasticSearchRecords(CustomerDomain $customer, string $action): array
     {
+        $customerArray = $this->createCustomerArrayFromEntity($customer);
         $indexArray = [
             'index' => 'customers',
             'id' => $customer->getId(),
-            'body' => [
-                'id' => $customer->getId(),
-                'name' => $customer->getName(),
-                'email' => $customer->getEmail(),
-                'phone_number' => $customer->getPhoneNumber(),
-            ]
+            'body' => $customerArray
         ];
 
         switch ($action) {
@@ -258,5 +297,7 @@ class CustomerRepository
                 $this->elasticClient->delete($params);
                 break;
         }
+
+        return $customerArray;
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Actions\Customer;
 
+use App\Application\Actions\ActionPayload;
 use Psr\Http\Message\ResponseInterface as Response;
 
 /**
@@ -23,7 +24,12 @@ class DeleteCustomerAction extends CustomerAction
 
         $this->logger->info("Customer of id " . $custId . " was deleted.");
 
-        return $this->respondWithData('Customer successfully deleted.')
+        $data = [
+            'message' => 'Customer successfully deleted.',
+        ];
+        $payload = new ActionPayload(204, $data);
+
+        return $this->respond($payload)
             ->withHeader('Content-Type', 'json');
     }
 }
